@@ -104,7 +104,7 @@ function splitRows(arrayData){
 }
 
 function writeJsonToFile(filePath, fileJson) {
-    fs.writeFile(filePath, fileJson, err => {
+    fs.writeFile(filePath, fileJson, err => { // si può usare anche writefilesync
         if (err) {
             console.error("Error");
         } else {
