@@ -1,0 +1,2 @@
+file di testo, per creare file concetto/formato tabellare, excel tipo, diviso da virgole
+csv = comma separate value, il separate può variare, non è solo virgola
