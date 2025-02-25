@@ -115,6 +115,9 @@ function writeJsonToFile(filePath, fileJson) {
 
 function main() {
 
+    // const originPath = getOriginPath();
+    // const csvData = readCsvFromFile(originPath);
+
     const csvData = readCsvFromFile("./data/test1.csv"); //leggo
     console.log(csvData);
 
@@ -122,9 +125,17 @@ function main() {
 
     writeJsonToFile("./output/students.json", json); //scrivo
     console.log(json);
+
+    // const destinationPath = getDestinationPath();
+    // writeJsonToFile(destinationPath, json);
+    // writeJsonToFile('./output/test2.json', json);
 }
 
 main();
 
 // (function main() {
 // }) ();
+
+// node .\main,js ./data/test1.cvs ./output/test1.json
+
+// provare a scrivere il programma al contrario fromJsonToCsv
