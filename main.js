@@ -60,33 +60,33 @@ function createObjectOfEntries(keys, values) {
 }
 
 function createEntry(keys, valueArray) {
-    const obj = {};
-    for (let i = 0; i < keys.length; i++) {
+    const obj = {}; // creo l'oggetto
+    for (let i = 0; i < keys.length; i++) { // itero dentro l'array delle chiavi
         const key = keys[i];
         const value = valueArray[i];
-        obj[key] = value;
+        obj[key] = value; // l'indice della chiave corrente viene assegnato all'indice del valore corrente e salvo in obj
     }
     return obj;
 }
 
 function getKeysFromFirstLine(arrayData) {
-    const arrayKeys = [...arrayData[0]];
+    const arrayKeys = [...arrayData[0]]; // entro dentro array con TUTTI i dati e assegno solo i valori a indice zero (che sono le chiavi)
     return arrayKeys;
 }
 
 function getValue(arrayData) {
     // si poteva fare anche con .slice
-    let arrayOfValues = [];
-    for (let i = 1; i < arrayData.length; i++) {
-        const array = arrayData[i];
-        arrayOfValues.push(array);
+    let arrayOfValues = []; // array vuoto
+    for (let i = 1; i < arrayData.length; i++) { // itero dentro l'array con tutti i dati, ma partendo da indice 1 (salto dunque le key)
+        const array = arrayData[i]; // assegno
+        arrayOfValues.push(array); // pusho le value in un nuovo array
         
     }
     return arrayOfValues;
 }
 
 function splitCsvInRows(csvData) {
-    const arrayDataRows = csvData.split(/\r?\n/);
+    const arrayDataRows = csvData.split(/\r?\n/); // dentro il file cerco la newline e la \r, splitto e assegno a nuovo array
     return arrayDataRows;
 }
 
@@ -103,6 +103,16 @@ function splitRows(arrayData){
     return newArray;
 }
 
+function writeJsonToFile(filePath, fileJson) {
+    fs.writeFile(filePath, fileJson, err => {
+        if (err) {
+            console.error("Error");
+        } else {
+        console.log("Json created!");
+        }
+    })
+}
+
 function main() {
 
     const csvData = readCsvFromFile("./data/test1.csv"); //leggo
@@ -110,7 +120,7 @@ function main() {
 
     const json = fromCsvToJson(csvData); //trasformo
 
-    // writeJsonToFile(filePath); //scrivo
+    writeJsonToFile("./output/students.json", json); //scrivo
     console.log(json);
 }
 
