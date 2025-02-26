@@ -1,143 +1,95 @@
+// STEP1 - leggere il file
+// si usa il modulo fs (che significa file system) alla quale si richiede accesso
+// in questo modo il mio programma può accedere al percorso in cui si trova il file da leggere
+
 const fs = require('fs');
+
+// dentro filePath scrivo il percorso del file
 
 const filePath = './data/test1.csv';
 
+// READFILE è una funzione asincrona che legge il file
+// in questo modo il programma continua a funzionare mentre il file viene letto
+
+// READFILESYNC è una funzione che legge il file in modo sincrono
+//  blocca l'esecuzione del codice fino a quando il file non è stato completamente letto
+
 function readCsvFromFile(filePath) {
-    try {
-        const csvData = fs.readFileSync(filePath, 'utf8');
-        return csvData;
-    } catch (err) {
-        console.error(`Error reading file from disk: ${err}`);
-    }
+	const fileContent = fs.readFileSync(filePath, 'utf8');
+	return fileContent;
 }
+const csvData = readCsvFromFile(filePath);
+console.log('contenuto csv:\n', csvData);
 
-function fromCsvToJson(csvData){
-    // name,surname,yob,gender
-    // lorenzo,puppo,1995,m
-    // hugo,martinez,1994,m
-    // sara,de prà,1989,f
-    const arrayOfStringRows = splitCsvInRows(csvData);
-    console.log(arrayOfStringRows);
-    // ["name,surname,yob,gender"]
-    // ["lorenzo,puppo,1995,m"]
-    // ["hugo,martinez,1994,m"]
-    // ["sara,de prà,1989,f"]
-    const arrayOfSplittedRows = splitRows(arrayOfStringRows);
-    console.log(arrayOfSplittedRows);
-    // [
-    // ["name","surname","yob","gender"]
-    // ["lorenzo","puppo",1995,"m"]
-    // ["hugo","martinez",1994,"m"]
-    // ["sara","de prà",1989,"f"]
-    // ]
-    const keys = getKeysFromFirstLine(arrayOfSplittedRows);
-    console.log(keys);
-    // ["name","surname","yob","gender"]
-    const values = getValue(arrayOfSplittedRows);
-    console.log(values);
-    // [
-    // ["lorenzo","puppo",1995,"m"]
-    // ["hugo","martinez",1994,"m"]
-    // ["sara","de prà",1989,"f"]
-    // ]
-    const ObjectFromEntries = createObjectOfEntries(keys, values);
-    console.log(ObjectFromEntries);
-    const json = convertObjectToJson(ObjectFromEntries);
-    return json;
-}
 
-function convertObjectToJson(object) {
-    return JSON.stringify(object);
-}
-
-function createObjectOfEntries(keys, values) {
-    const arrayOfEntries = [];
-    for (let i = 0; i < values.length; i++) {
-        const element = values[i];
-
-        const entry = createEntry(keys, element);
-        arrayOfEntries.push(entry);
-    }
-    return arrayOfEntries;
-}
-
-function createEntry(keys, valueArray) {
-    const obj = {}; // creo l'oggetto
-    for (let i = 0; i < keys.length; i++) { // itero dentro l'array delle chiavi
-        const key = keys[i];
-        const value = valueArray[i];
-        obj[key] = value; // l'indice della chiave corrente viene assegnato all'indice del valore corrente e salvo in obj
-    }
-    return obj;
-}
-
-function getKeysFromFirstLine(arrayData) {
-    const arrayKeys = [...arrayData[0]]; // entro dentro array con TUTTI i dati e assegno solo i valori a indice zero (che sono le chiavi)
-    return arrayKeys;
-}
-
-function getValue(arrayData) {
-    // si poteva fare anche con .slice
-    let arrayOfValues = []; // array vuoto
-    for (let i = 1; i < arrayData.length; i++) { // itero dentro l'array con tutti i dati, ma partendo da indice 1 (salto dunque le key)
-        const array = arrayData[i]; // assegno
-        arrayOfValues.push(array); // pusho le value in un nuovo array
-        
-    }
-    return arrayOfValues;
-}
+// STEP2 - trasformare il file in un array
+// posso dividere il file in righe cercando le rispettive newline e \r
+// in questo modo ottengo un array per ogni riga, che pusherò dentro un array contenitore
 
 function splitCsvInRows(csvData) {
-    const arrayDataRows = csvData.split(/\r?\n/); // dentro il file cerco la newline e la \r, splitto e assegno a nuovo array
-    return arrayDataRows;
+	const arrayOfStrings = csvData.split(/\r?\n/);
+	return arrayOfStrings;
+}
+const arrayOfSplittedRows = splitCsvInRows(csvData);
+console.log(arrayOfSplittedRows);
+
+// STEP3 - convertire ciascuna parola in stringa, 
+// splittando le virgole in ogni array
+// SPLIT rimuove l'elemento divisore ricercato (in questo caso la virgola)
+// e suddivide la stringa in sottostringhe
+// SPLIT restituisce SEMPRE un array
+
+function splitCommasToStrings(arrayOfSplittedRows) {
+	const stringsNoComma = []
+	for (let i = 0; i < arrayOfSplittedRows.length; i++) {
+		const stringRow = arrayOfSplittedRows[i];
+
+		const tempSplitted = stringRow.split(',');
+		stringsNoComma.push(tempSplitted);
+	}
+	return stringsNoComma;
+}
+const arrayOfStrings = splitCommasToStrings(arrayOfSplittedRows);
+console.log(arrayOfStrings);
+
+// STEP 4 - conversione in chiave oggetto della prima stringa e 
+// dei corrispettivi valori delle rimanenti stringhe in correlazione 
+// alla posizione dell'indice nell'array
+
+function arrayToObject(arrayOfStrings) {
+	const keys = arrayOfStrings[0];
+	const arrayOfObjects = []
+
+	for (let i = 1; i < arrayOfStrings.length; i++) {
+		const obj = {};
+		for (let j = 0; j < keys.length; j++) {
+			obj[keys[j]] = arrayOfStrings[i][j];
+		}
+		arrayOfObjects.push(obj);
+	}
+	return arrayOfObjects;
 }
 
-function splitRows(arrayData){
-    let newArray = [];
+const convertToObjects = arrayToObject(arrayOfStrings);
+console.log(convertToObjects);
 
-    for (let i = 0; i < arrayData.length; i++) {
-        const stringRow = arrayData[i];
+// STEP 5 stringify object
 
-        const arrayStringRow = stringRow.split(',');
-        newArray.push(arrayStringRow);
-    }
-
-    return newArray;
+function convertObjectToJson(object) {
+	return JSON.stringify(object);
 }
 
-function writeJsonToFile(filePath, fileJson) {
-    fs.writeFile(filePath, fileJson, err => { // si può usare anche writefilesync
+const jsonStringified = convertObjectToJson(convertToObjects)
+console.log(jsonStringified);
+
+function writeToJson(jsonStringified) {
+	fs.writeFile('./output/test1.json', jsonStringified, (err) => {
         if (err) {
-            console.error("Error");
+            console.error('Error writing to file', err);
         } else {
-        console.log("Json created!");
+            console.log('File has been written successfully');
         }
-    })
+	});
 }
 
-function main() {
-
-    // const originPath = getOriginPath();
-    // const csvData = readCsvFromFile(originPath);
-
-    const csvData = readCsvFromFile("./data/test1.csv"); //leggo
-    console.log(csvData);
-
-    const json = fromCsvToJson(csvData); //trasformo
-
-    writeJsonToFile("./output/test1.json", json); //scrivo
-    console.log(json);
-
-    // const destinationPath = getDestinationPath();
-    // writeJsonToFile(destinationPath, json);
-    // writeJsonToFile('./output/test2.json', json);
-}
-
-main();
-
-// (function main() {
-// }) ();
-
-// node .\main,js ./data/test1.cvs ./output/test1.json
-
-// provare a scrivere il programma al contrario fromJsonToCsv
+writeToJson(jsonStringified);
