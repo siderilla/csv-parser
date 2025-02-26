@@ -123,7 +123,7 @@ function main() {
 
     const json = fromCsvToJson(csvData); //trasformo
 
-    writeJsonToFile("./output/students.json", json); //scrivo
+    writeJsonToFile("./output/test1.json", json); //scrivo
     console.log(json);
 
     // const destinationPath = getDestinationPath();
