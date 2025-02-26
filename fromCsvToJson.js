@@ -1,8 +1,7 @@
 const fs = require('fs');
 
-<<<<<<< HEAD:main.js
 const filePath = './data/test1.csv';
-=======
+
 function readCsvFromFile(filePath) {
     try {
         const csvData = fs.readFileSync(filePath, 'utf8');
@@ -142,4 +141,3 @@ main();
 // node .\main,js ./data/test1.cvs ./output/test1.json
 
 // provare a scrivere il programma al contrario fromJsonToCsv
->>>>>>> 0a449fa5cf839276c14c87fbc6f065f2d1fbb558:fromCsvToJson.js
